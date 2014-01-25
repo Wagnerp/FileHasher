@@ -16,17 +16,32 @@ namespace FileHasher
 {
     public partial class mainF : Form
     {
-        string log = null;
         BackgroundWorker bgworker = new BackgroundWorker();
         Stopwatch sw = new Stopwatch();
         Timer tm = new Timer();
+        int type = 1;
 
         public mainF()
         {
             InitializeComponent();
+            cb_output_format.SelectedIndex = 1;
+            cb_output_format.SelectedIndexChanged += new EventHandler(FormatChanged);
         }
 
-        private void mainF_Load(object sender, EventArgs e)
+        private void FormatChanged(object sender, EventArgs e)
+        {
+            switch (cb_output_format.SelectedIndex)
+            {
+                case 0:
+                    lb_format.Visible = tb_textformat.Visible = true;
+                    break;
+                case 1:
+                    lb_format.Visible = tb_textformat.Visible = false;
+                    break;
+            }
+        }
+
+        private void FormLoaded(object sender, EventArgs e)
         {
             bgworker.WorkerReportsProgress = true;
             bgworker.WorkerSupportsCancellation = true;
@@ -40,14 +55,23 @@ namespace FileHasher
         private void tickTak(object sender, EventArgs e)
         {
             TimeSpan ts = sw.Elapsed;
-            string outTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-            infoout.Text = log + "Прошло времени: " + outTime;
+            TimeElapsed.Text = String.Format("Time elapsed: {0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
         }
 
         private void bgworker_DoWork(object sender, DoWorkEventArgs e)
         {
-            BackgroundWorker worker = sender as BackgroundWorker;            
-            HashHelper.MakeHash(treeView1, tb_savePath.Text);            
+            but_makeHash.Invoke((MethodInvoker)delegate { but_makeHash.Enabled = false; });
+            BackgroundWorker worker = sender as BackgroundWorker;
+            try
+            {
+                HashHelper.MakeHash(treeView1, tb_savePath.Text, tb_textformat.Text, type);
+            }
+            catch(Exception ex)
+            {
+                sw.Stop();
+                tm.Stop();
+                MessageBox.Show("Select Input dir and Output dir.", "Error");
+            }
         }
 
         private void bgworker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -57,28 +81,18 @@ namespace FileHasher
 
         private void bgworker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (e.Error != null)
-            {
-                infoout.Text = log + "Ошибка. :)\n";
-            }
-            else if (e.Cancelled)
-            {
-                infoout.Text = log + "Операция отменена\n";
-            }
+            if (e.Error != null) { }
+            else if (e.Cancelled) { }
             else
             {
-                TimeSpan ts = sw.Elapsed;
-                string outTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
                 sw.Stop();
                 tm.Stop();
-                log += "Хеш с генерирован\n";                
-                log += "Времени затрачено: " + outTime + "\n";
-                infoout.Text = log;
-                
+                InfoStatus.Text = "Done";
+                but_makeHash.Invoke((MethodInvoker)delegate { but_makeHash.Enabled = true; });
             }
         }
 
-        private void but_rootDir_Click(object sender, EventArgs e)
+        private void OpenRootDir(object sender, EventArgs e)
         {
             DialogResult result = folderDlg.ShowDialog();
 
@@ -86,13 +100,11 @@ namespace FileHasher
             {
                 tb_rootPath.Text = folderDlg.SelectedPath;
                 TreeHelper.PopulateTreeView(treeView1, tb_rootPath.Text);
-                infoout.Clear();
-                infoout.AppendText("Загружено файлов и папок: " + treeView1.GetNodeCount(true) + "\n");
-                log = infoout.Text;
+                TotalFiles.Text = String.Format("Files loaded: {0}", treeView1.GetNodeCount(true));
             }
         }
 
-        private void but_saveHash_Click(object sender, EventArgs e)
+        private void OpenSaveDir(object sender, EventArgs e)
         {
             DialogResult result = folderDlg.ShowDialog();
 
@@ -102,40 +114,48 @@ namespace FileHasher
             }
         }
 
-        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void SelectNode(object sender, TreeNodeMouseClickEventArgs e)
         {
             TreeNode newSelected = e.Node;
             if (newSelected.Tag is FileInfo)
             {
                 FileInfo fi = (FileInfo)newSelected.Tag;
-                infoout.Text =  log + fi.FullName;
+                lb_file_path_info.Text =  fi.FullName;
             }
             else
             {
                 DirectoryInfo di = (DirectoryInfo)newSelected.Tag;
-                infoout.Text = log + di.FullName;
+                lb_file_path_info.Text = di.FullName;
             }
         }
 
-        private void but_makeHash_Click(object sender, EventArgs e)
-        {            
-            infoout.Text = log + "Начат процесс генерации хеша, ожидайте.\n";                      
-            log = infoout.Text;
+        private void GenerateHash(object sender, EventArgs e)
+        {
+            if (!tb_textformat.Text.Contains("{0}") || !tb_textformat.Text.Contains("{1}"))
+            {
+                MessageBox.Show("Wrong string format.", "Error");
+                return;
+            }
+            if (string.IsNullOrEmpty(tb_rootPath.Text) || string.IsNullOrEmpty(tb_savePath.Text))
+            {
+                MessageBox.Show("Directories filed is empty.", "Error");
+                return;
+            }
+            if (!Directory.Exists(tb_savePath.Text) || !Directory.Exists(tb_rootPath.Text))
+            {
+                MessageBox.Show("Selected directories is not exist.", "Error");
+                return;
+            }
+            type = cb_output_format.SelectedIndex;
             sw.Start();
-            tm.Start();
+            tm.Start();            
             bgworker.RunWorkerAsync();
         }
 
         private void deleteTreeNode_Click(object sender, EventArgs e)
         {
-            try
-            {
-                treeView1.Nodes.Remove(treeView1.SelectedNode);
-            }
-            catch
-            {
-
-            }
+            try { treeView1.Nodes.Remove(treeView1.SelectedNode); }
+            catch { }
         }
     }
 }

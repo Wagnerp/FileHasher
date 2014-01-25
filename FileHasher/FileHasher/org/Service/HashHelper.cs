@@ -19,7 +19,9 @@ namespace FileHasher.org.Service
         /// </summary>
         /// <param name="tv">Список отображения</param>
         /// <param name="savePath">Путь сохранения хеша</param>
-        public static void MakeHash(TreeView tv, string savePath)
+        /// <param name="txtFormat">формат вывода данных</param>
+        /// <param name="outPutType">Тип выходного формата</param>
+        public static void MakeHash(TreeView tv, string savePath, string txtFormat, int outPutType)
         {
             HashTable ht = new HashTable();
             TreeNode rootNode = tv.Nodes[0];
@@ -31,7 +33,10 @@ namespace FileHasher.org.Service
             ht.FilePathAndHash = hash;
 
             // save all hash
-            IOHelper.SaveHashTable(ht, savePath);
+            if (outPutType == 1)
+                IOHelper.SaveHashTableAsXml(ht, savePath);
+            else
+                IOHelper.SaveHashTableAsTxt(ht, savePath, txtFormat);
         }
 
         /// <summary>
