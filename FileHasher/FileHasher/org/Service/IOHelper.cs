@@ -7,7 +7,7 @@ using System.Xml;
 
 namespace FileHasher.org.Service
 {
-    public static class SaveService
+    public static class IOHelper
     {
         public static void SaveHashTable(HashTable hashTable, string pathToSave)
         {

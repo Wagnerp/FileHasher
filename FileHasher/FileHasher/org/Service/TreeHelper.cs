@@ -7,7 +7,7 @@ using System.IO;
 
 namespace FileHasher.org.Service
 {
-    public static class MakeTreeService
+    public static class TreeHelper
     {
         /// <summary>
         /// Начинает создание дерева каталогов и файлов

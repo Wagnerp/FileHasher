@@ -47,7 +47,7 @@ namespace FileHasher
         private void bgworker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;            
-            MakeHashService.MakeHash(treeView1, tb_savePath.Text);            
+            HashHelper.MakeHash(treeView1, tb_savePath.Text);            
         }
 
         private void bgworker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -85,7 +85,7 @@ namespace FileHasher
             if (result == DialogResult.OK)
             {
                 tb_rootPath.Text = folderDlg.SelectedPath;
-                MakeTreeService.PopulateTreeView(treeView1, tb_rootPath.Text);
+                TreeHelper.PopulateTreeView(treeView1, tb_rootPath.Text);
                 infoout.Clear();
                 infoout.AppendText("Загружено файлов и папок: " + treeView1.GetNodeCount(true) + "\n");
                 log = infoout.Text;

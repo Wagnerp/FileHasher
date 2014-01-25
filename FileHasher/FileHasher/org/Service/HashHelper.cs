@@ -10,7 +10,7 @@ using System.ComponentModel;
 
 namespace FileHasher.org.Service
 {
-    public static class MakeHashService
+    public static class HashHelper
     {
         private static string Root { get; set; }
 
@@ -31,7 +31,7 @@ namespace FileHasher.org.Service
             ht.FilePathAndHash = hash;
 
             // save all hash
-            SaveService.SaveHashTable(ht, savePath);
+            IOHelper.SaveHashTable(ht, savePath);
         }
 
         /// <summary>
