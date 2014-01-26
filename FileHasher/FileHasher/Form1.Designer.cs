@@ -47,9 +47,9 @@
             this.status_bar = new System.Windows.Forms.StatusStrip();
             this.TotalFiles = new System.Windows.Forms.ToolStripStatusLabel();
             this.TimeElapsed = new System.Windows.Forms.ToolStripStatusLabel();
+            this.InfoStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.lb_file_path_info = new System.Windows.Forms.Label();
-            this.InfoStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.tvMenu.SuspendLayout();
             this.status_bar.SuspendLayout();
             this.SuspendLayout();
@@ -104,6 +104,7 @@
             this.treeView1.SelectedImageIndex = 0;
             this.treeView1.Size = new System.Drawing.Size(418, 219);
             this.treeView1.TabIndex = 4;
+            this.treeView1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCheck);
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.SelectNode);
             // 
             // tvMenu
@@ -201,6 +202,11 @@
             this.TimeElapsed.Name = "TimeElapsed";
             this.TimeElapsed.Size = new System.Drawing.Size(0, 17);
             // 
+            // InfoStatus
+            // 
+            this.InfoStatus.Name = "InfoStatus";
+            this.InfoStatus.Size = new System.Drawing.Size(0, 17);
+            // 
             // lb_file_path_info
             // 
             this.lb_file_path_info.AutoSize = true;
@@ -208,11 +214,6 @@
             this.lb_file_path_info.Name = "lb_file_path_info";
             this.lb_file_path_info.Size = new System.Drawing.Size(0, 13);
             this.lb_file_path_info.TabIndex = 11;
-            // 
-            // InfoStatus
-            // 
-            this.InfoStatus.Name = "InfoStatus";
-            this.InfoStatus.Size = new System.Drawing.Size(0, 17);
             // 
             // mainF
             // 

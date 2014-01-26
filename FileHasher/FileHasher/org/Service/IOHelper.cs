@@ -33,7 +33,7 @@ namespace FileHasher.org.Service
 
         public static void SaveHashTableAsTxt(HashTable hashTable, string pathToSave, string format)
         {
-            using (FileStream fs = new FileStream(Path.Combine(pathToSave, "hashtable.xml"), FileMode.Create, FileAccess.Write))
+            using (FileStream fs = new FileStream(Path.Combine(pathToSave, "hashtable.txt"), FileMode.Create, FileAccess.Write))
             {
                 using (StreamWriter sw = new StreamWriter(fs))
                 {

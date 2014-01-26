@@ -157,5 +157,10 @@ namespace FileHasher
             try { treeView1.Nodes.Remove(treeView1.SelectedNode); }
             catch { }
         }
+
+        private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            TreeHelper.ApplyCheckState(e.Node, e.Node.Checked);
+        }
     }
 }

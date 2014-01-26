@@ -10,6 +10,23 @@ namespace FileHasher.org.Service
     public static class TreeHelper
     {
         /// <summary>
+        /// Применяет указанное состояние чекбокса ко всем подузлам указанного узла.
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="state"></param>
+        public static void ApplyCheckState(TreeNode root, bool state)
+        {            
+            if (root != null && root.Nodes.Count > 0)
+            {
+                foreach (TreeNode subnode in root.Nodes)
+                {
+                    subnode.Checked = state;
+                    ApplyCheckState(subnode, state);
+                }
+            }
+        }
+
+        /// <summary>
         /// Начинает создание дерева каталогов и файлов
         /// </summary>
         public static void PopulateTreeView(TreeView tv, string rootPath)
